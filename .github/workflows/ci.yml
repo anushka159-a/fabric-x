@@ -78,7 +78,7 @@ jobs:
           else
            echo "IMAGE_PREFIX=${{ secrets.DOCKERHUB_USERNAME }}" >> $GITHUB_ENV
           fi
-          echo "REPO_PATH=github.com/${IMAGE_PREFIX}/fabric-x" >> $GITHUB_ENV
+          echo "REPO_PATH=github.com/${IMAGE_PREFIX}" >> $GITHUB_ENV
 
       - name: Build and Push Single-Platform Docker Image
         uses: docker/build-push-action@v6
@@ -138,5 +138,5 @@ jobs:
             FABRIC_X_VERSION=${{ github.ref_name }}
             REPO_PATH=${{ env.REPO_PATH }}
           tags: |
-            docker.io/hyperledger/fabric-x-tools:latest
-            docker.io/hyperledger/fabric-x-tools:${{ env.VERSION }}
+            docker.io/${{ env.IMAGE_PREFIX }}/fabric-x-tools:latest
+            docker.io/${{ env.IMAGE_PREFIX }}/fabric-x-tools:${{ env.VERSION }}
