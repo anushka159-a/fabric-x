@@ -88,7 +88,7 @@ jobs:
           platforms: linux/amd64
           push: true
           build-args: |
-            FABRIC_X_VERSION=${{ github.ref_name }}
+            FABRIC_X_VERSION=main
             REPO_PATH=${{ env.REPO_PATH }}
           tags: |
             docker.io/hyperledger/fabric-x-tools:latest
@@ -135,7 +135,7 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/s390x
           push: true
           build-args: |
-            FABRIC_X_VERSION=${{ github.ref_name }}
+            FABRIC_X_VERSION=main
             REPO_PATH=${{ env.REPO_PATH }}
           tags: |
             docker.io/hyperledger/fabric-x-tools:latest
