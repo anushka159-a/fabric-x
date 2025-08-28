@@ -48,7 +48,7 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/s390x
           push: true
           build-args: |
-            FABRIC_X_VERSION=v${{ env.VERSION }}
+            FABRIC_X_VERSION=${{ github.ref_name }}
             REPO_PATH=github.com/hyperledger/fabric-x/tools
           tags: |
             docker.io/anushka12/fabric-x-tools:latest
