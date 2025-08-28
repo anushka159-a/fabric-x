@@ -34,8 +34,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Extract version from tag (strip "tools/")
-        run: echo "VERSION=${GITHUB_REF#refs/tags/tools/}" >> $GITHUB_ENV
+      - name: Extract version from tag
+        run: echo "VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
 
       - name: Build and Push Multi-Platform Docker Image
         uses: docker/build-push-action@v6
@@ -45,7 +45,7 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/s390x
           push: true
           build-args: |
-            FABRIC_X_VERSION=tools/${{ env.VERSION }}
+            FABRIC_X_VERSION=${{ env.VERSION }}
             REPO_PATH=github.com/hyperledger/fabric-x/tools
           tags: |
             docker.io/anushka12/fabric-x-tools:latest
