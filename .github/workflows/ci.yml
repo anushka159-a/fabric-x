@@ -1,6 +1,5 @@
 #
-# Copyright IBM Corp. All Rights Reserved.
-#
+# Copyright IBM Corp.
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -9,18 +8,32 @@ name: Build Image
 on:
   push:
     tags:
-      - "v*"
+      - "v*"   # root version tags (e.g. v0.0.5)
 
 permissions:
-  packages: write
+  contents: write   # needed to push tags
+  packages: write   # needed for GHCR/Docker
 
 jobs:
   image-build:
     name: Docker Image Build
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # needed for tagging
+
+      # 🔹 Create and push the tools submodule tag
+      - name: Create tools submodule tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          TOOLS_TAG="tools/${VERSION}"
+          echo "Creating submodule tag: ${TOOLS_TAG}"
+
+          git tag ${TOOLS_TAG} ${VERSION}
+          git push origin ${TOOLS_TAG}
 
       - name: Set up QEMU for cross-platform builds
         uses: docker/setup-qemu-action@v3
@@ -35,7 +48,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Extract version from tag
-        run: echo "VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
       - name: Build and Push Multi-Platform Docker Image
         uses: docker/build-push-action@v6
@@ -45,7 +58,7 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/s390x
           push: true
           build-args: |
-            FABRIC_X_VERSION=${{ env.VERSION }}
+            FABRIC_X_VERSION=tools/${{ env.VERSION }}
             REPO_PATH=github.com/hyperledger/fabric-x/tools
           tags: |
             docker.io/anushka12/fabric-x-tools:latest
