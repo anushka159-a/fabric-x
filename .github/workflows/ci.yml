@@ -8,11 +8,11 @@ name: Build Image
 on:
   push:
     tags:
-      - "v*"   # e.g. v0.2.0
+      - "v*"   # e.g. v0.2.1
 
 permissions:
-  contents: write   # needed to push tags
-  packages: write   # needed for GHCR/Docker
+  contents: write
+  packages: write
 
 jobs:
   image-build:
@@ -23,21 +23,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # we need history for tagging
+          fetch-depth: 0   # needed for tagging
 
-      # 🔹 Auto-create & push tools/ tag when root tag exists
-      - name: Create tools submodule tag
+      # 🔹 Ensure the tools module has its own semver tag
+      - name: Create tools module tag
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
-          echo "Root tag detected: $VERSION"
-
+          echo "Root tag: ${VERSION}"
+          
           cd tools
-          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
-            echo "tools/v$VERSION already exists"
+          if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
+            echo "Tools tag v${VERSION} already exists. Skipping."
           else
-            echo "Creating tools/v$VERSION"
-            git tag v$VERSION
-            git push origin v$VERSION
+            echo "Creating tools tag v${VERSION}"
+            git tag v${VERSION}
+            git push origin v${VERSION}
           fi
 
       - name: Set up QEMU for cross-platform builds
