@@ -8,7 +8,7 @@ name: Build Image
 on:
   push:
     tags:
-      - "v*"   # root version tags (e.g. v0.0.6)
+      - "v*"   # e.g. v0.2.0
 
 permissions:
   contents: write   # needed to push tags
@@ -23,7 +23,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # ensure tags are available
+          fetch-depth: 0   # we need history for tagging
+
+      # 🔹 Auto-create & push tools/ tag when root tag exists
+      - name: Create tools submodule tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "Root tag detected: $VERSION"
+
+          cd tools
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "tools/v$VERSION already exists"
+          else
+            echo "Creating tools/v$VERSION"
+            git tag v$VERSION
+            git push origin v$VERSION
+          fi
 
       - name: Set up QEMU for cross-platform builds
         uses: docker/setup-qemu-action@v3
@@ -48,7 +63,7 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/s390x
           push: true
           build-args: |
-            FABRIC_X_VERSION=${{ github.ref_name }}
+            FABRIC_X_VERSION=v${{ env.VERSION }}
             REPO_PATH=github.com/anushka159-a/fabric-x/tools
           tags: |
             docker.io/anushka12/fabric-x-tools:latest
