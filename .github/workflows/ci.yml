@@ -9,7 +9,7 @@ name: Build Image
 on:
   push:
     tags:
-      - "tools/v*"
+      - "v*"
 
 permissions:
   packages: write
