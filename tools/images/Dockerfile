@@ -6,8 +6,8 @@
 # syntax=docker/dockerfile:1
 FROM golang:1.24 AS builder
 
-# We pin to the tools submodule tag, e.g. tools/v0.0.1
-ARG FABRIC_X_VERSION=tools/v0.0.1
+# Default to latest, but CI will override with the versioned tag (e.g. v0.0.6)
+ARG FABRIC_X_VERSION=latest
 ARG REPO_PATH=github.com/hyperledger/fabric-x/tools
 
 # Install binaries directly from GitHub into /tmp/bin
