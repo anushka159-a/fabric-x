@@ -8,7 +8,7 @@ FROM golang:1.24 AS builder
 
 # Default to latest, but CI will override with the versioned tag (e.g. v0.0.6)
 ARG FABRIC_X_VERSION=latest
-ARG REPO_PATH=github.com/hyperledger/fabric-x/tools
+ARG REPO_PATH=github.com/anushka159-a/fabric-x/tools
 
 # Install binaries directly from GitHub into /tmp/bin
 ENV GOBIN=/tmp/bin
